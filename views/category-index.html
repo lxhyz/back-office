@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>layout 后台大布局 - Layui</title>
+  <link rel="stylesheet" href="/public/layui/css/layui.css">
+</head>
+
+<body class="layui-layout-body">
+  <div class="layui-layout layui-layout-admin">
+    
+
+  <!--头部模块-->
+  {{include './common/header.html'}}
+
+    <div class="layui-body">
+      <!-- 内容主体区域 -->
+      <div style="padding: 15px;">
+        <table class="layui-table">
+          <colgroup>
+            <col width="100">
+            <col width="100">
+            <col width="150">
+            <col width="180">
+            <col width="180">
+            <col>
+          </colgroup>
+          <thead>
+            <tr>
+              <th>序号</th>
+              <th>名称</th>
+              <th>排序</th>
+              <th>时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  <!--引入左侧模板-->
+  {{include './common/side.html'}}
+
+  <!--引入底部模板-->
+  {{include './common/footer.html'}}
+    
+  <script src="/public/layui/layui.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+  <script src="/public/js/moment.js"></script>  <!--moment模块-->
+  <script src="/public/js/util.js"></script>  <!--moment时间方法-->
+  <script>
+    // 动态创建 tr数据表格方法
+    function renderTable(data) {
+      let tbodyHtml = '';
+      data.forEach((item,index)=>{   // 循环获取到的数组
+        let {name,sort,add_date,cat_id} = item;
+        // console.log(item)
+        // 使用 moment第三方模块 转换时间
+        // add_date = moment(add_date).format('YYYY-MM-DD HH:mm:ss');
+        add_date = util.date_format(add_date);
+        tbodyHtml +=`
+        <tr>
+            <td>${index}</td>
+            <td>${name}</td>
+            <td>${sort}</td>
+            <td>${add_date}</td>
+            <td>
+              <button title = '编辑' type="button" class="layui-btn layui-btn-sm">
+                <i class="layui-icon">&#xe642;</i>
+              </button>
+              <button title = '删除' type="button" cat_id = '${cat_id}' class="del layui-btn layui-btn-danger layui-btn-sm">
+                <i class="layui-icon">&#xe640;</i>
+              </button>
+            </td>
+          </tr>
+        `;
+        // 吧创建好的数据追加到id = tbody元素
+        $('#tbody').html(tbodyHtml);
+      })
+    }
+
+    function initCatDate() {
+      $.ajax({
+        url:"/getCate",
+      }).then(res=>{
+        // console.log(res);
+        // 动态 tr数据表格,追加到tbody中去
+        renderTable(res);  // res 数据库中的数据 形参传递
+      })
+    }
+    // 发送ajax请求 获取数据
+    initCatDate()
+   
+    //JavaScript代码区域
+    layui.use('element', function () {
+      var element = layui.element;
+      // 提升为全局变量 供外部使用
+    });
+
+    // 加载layer弹出层模块
+    layui.use('layer', function(){
+      layer = layui.layer;
+    });
+
+
+    // ajax删除数据  (委托绑定，tr元素del类名是动态新增的)
+    $("#tbody").on('click','.del',function() {
+
+      // 防止用户误删除
+      let _this = $(this); // 保存当前点击对象
+      let cat_id = $(this).attr('cat_id');
+      //询问框
+
+      layer.confirm('确认删除吗', {
+        btn: ['是的','取消'] //按钮
+      }, function(){
+        // 点击了确认删除 发送ajax
+        $.ajax({
+          type:'post',
+          url:"delCat",
+          data:{cat_id},
+        }).then(res=> {
+          let {errcode,message} =res;
+          if(errcode == 0) {
+            // 关闭确认框 移除点击的tr
+            _this.parents('tr').remove();  // 2.移除点击按钮的tr
+            layer.closeAll(); // 1.疯狂模式，关闭所有层
+            // 给序号排序  获取tr 中的第一个 td 循环赋值下标
+            // 找到每个td中的第一个td 从新编号 
+            $.each( $("#tbody tr").find('td:eq(0)'),function (index,ele){
+              // $(this) => tr的jquery对象
+              $(ele).html(index +1);
+            });
+            // 提示用户 删除成功
+            layer.msg('删除成功');
+          }
+        }).catch( () =>{
+          layer.closeAll(); // 1.疯狂模式，关闭所有层
+        })
+      });
+      
+    })
+
+
+    
+  </script>
+</body>
+
+</html>
