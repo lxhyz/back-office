@@ -10,14 +10,19 @@
 
 <body class="layui-layout-body">
   <div class="layui-layout layui-layout-admin">
-    
+  
 
   <!--头部模块-->
   {{include './common/header.html'}}
-
+    
     <div class="layui-body">
       <!-- 内容主体区域 -->
+      管理文章
       <div style="padding: 15px;">
+        <button type="button" class="layui-btn" id ="add">
+          <i class="layui-icon">&#xe608;</i> 添加分类
+        </button>
+
         <table class="layui-table">
           <colgroup>
             <col width="100">
@@ -70,7 +75,7 @@
             <td>${sort}</td>
             <td>${add_date}</td>
             <td>
-              <button title = '编辑' type="button" class="layui-btn layui-btn-sm">
+              <button title = '编辑' type="button" cat_id = '${cat_id}' class="layui-btn layui-btn-sm edit">
                 <i class="layui-icon">&#xe642;</i>
               </button>
               <button title = '删除' type="button" cat_id = '${cat_id}' class="del layui-btn layui-btn-danger layui-btn-sm">
@@ -146,7 +151,17 @@
       
     })
 
+    // 跳转到添加分类嘚页面中
+    $("#add").on('click',function() {
+      location.href = '/catadd';
+    })
 
+
+    // 跳转到编辑页面
+    $("tbody").on('click',".edit",function() {
+      let cat_id = $(this).attr("cat_id");
+      location.href = "/catedit?cat_id=" + cat_id;
+    })
     
   </script>
 </body>
