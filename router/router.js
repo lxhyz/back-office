@@ -3,7 +3,8 @@ const express = require('express');
 
 
 //导入响应的控制器
-const cateConterller = require("../controller/cateController.js")
+const cateConterller = require("../controller/cateController.js");
+const artController = require("../controller/artController")
 
 // 得到一个路由
 let router = express.Router();
@@ -40,5 +41,12 @@ router.get("/getOnecate",cateConterller.getOnecate);
 
 // 编辑分类的接口
 router.post('/updCate',cateConterller.updCate);
+
+
+//  获取文章数据的接口
+router.get("/allarticle",artController.allarticle);
+
+//  删除文章
+router.post("/delArticle",artController.delArticle);
 
 module.exports = router;
