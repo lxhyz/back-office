@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>layout 后台大布局 - Layui</title>
   <link rel="stylesheet" href="/public/layui/css/layui.css">
+  <link rel="stylesheet" href="/public/css/nprogress.css">
 </head>
 
 <body class="layui-layout-body">
@@ -54,11 +55,23 @@
   <!--引入底部模板-->
   {{include './common/footer.html'}}
     
+  <script src="/public/js/moment.js"></script>
+  <script src="/public/js/juqery.js"></script>
   <script src="/public/layui/layui.js"></script>
-  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
-  <script src="/public/js/moment.js"></script>  <!--moment模块-->
-  <script src="/public/js/util.js"></script>  <!--moment时间方法-->
+  <script src="/public/js/util.js"></script>
+  <script src="/public/js/nprogress.js"></script>
   <script>
+    // 加入 顶部进度条
+    NProgress.set(0.4)
+    let interval = setInterval(function() {
+      NProgress.inc();
+    },200)
+    $(window).on('load', function() {
+      clearInterval(interval)
+      NProgress.done();
+    })
+
+
     // 动态创建 tr数据表格方法
     function renderTable(data) {
       let tbodyHtml = '';
