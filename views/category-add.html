@@ -95,7 +95,7 @@
     }).then(res => {
       $(data.elem).removeClass("layui-btn-disabled").text(oldText);  // 恢复按钮 
       let {errcode,message} =res;
-      if(errcode === 10004) {
+      if(errcode == 10004) {
         layer.msg(message);
         location.href = "/catindex";
       } else {

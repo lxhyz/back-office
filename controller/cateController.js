@@ -107,7 +107,7 @@ CateController.postCat = async (req,res) => {
     if(result.affectedRows) {
         // 成功
         //data[0].errcode = 0;
-        res.json(updfail)
+        res.json(successAdd)
     } else {
         // 失败
         res.json(updfail)

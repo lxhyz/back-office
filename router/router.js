@@ -1,6 +1,7 @@
 const express = require('express');
+const multer = require('multer');
 
-
+var upload = multer({ dest: 'uploads/' })
 
 //导入响应的控制器
 const cateConterller = require("../controller/cateController.js");
@@ -42,11 +43,22 @@ router.get("/getOnecate",cateConterller.getOnecate);
 // 编辑分类的接口
 router.post('/updCate',cateConterller.updCate);
 
-
 //  获取文章数据的接口
 router.get("/allarticle",artController.allarticle);
 
 //  删除文章
 router.post("/delArticle",artController.delArticle);
+
+// 渲染出编辑文章的页面
+router.get("/artedit",artController.artedit);
+
+// 渲染出添加文章的页面
+router.get("/addart",artController.addart);
+
+// 提交文章的数据入库
+router.post("/postArt",artController.postArt);
+
+// 上传文件接口
+router.post("/upload",upload.single('file'),artController.upload);
 
 module.exports = router;

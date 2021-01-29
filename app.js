@@ -26,6 +26,9 @@ app.set('view engine', 'html');
 // 托管静态资源
 app.use('/public',express.static(path.join(__dirname,'public')));
 
+// 图片静态资源
+app.use('/uploads',express.static(path.join(__dirname,'uploads')));
+
 // 使用路由中间件
 app.use(router);
 

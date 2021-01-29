@@ -23,13 +23,17 @@
       <!-- 内容主体区域 -->
       <div style="padding: 15px;">
         删除文章区域
+        <button type="button" class="layui-btn" id ="add">
+          <i class="layui-icon">&#xe608;</i> 添加文章
+        </button>
+
         <table class="layui-hide" id="test" lay-filter="test"></table>
 
-        <script type="text/html" id="barDemo">
+      <!-- <script type="text/html" id="barDemo">
         <a class="layui-btn layui-btn-xs" lay-event="show">查看内容</a>
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-      </script>
+      </script> -->
       </div>
     </div>
 
@@ -72,19 +76,18 @@
         , title: '文章数据'
         , cols: [[
           { type: 'checkbox', fixed: 'left' }
-          , { field: 'art_id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true }
+          , { field: 'art_id', title: 'ID', width: 80, fixed: 'left', unresize: true, sort: true,hide:true }
           , { field: 'title', title: '标题', width: 120, edit: 'text' }
           , { field: 'content', title: '内容', width: 120 }
-          , { field: 'cat_id', title: '所属分类', width: 150,hide:true}
+          , { field: 'name', title: '所属分类', width: 150}
           , { field: 'author', title: '作者', width: 80, edit: 'text', sort: true }
           , { field: 'cover', title: '照片', width: 100 }
           , {
             field: 'status', title: '状态', unresize: false, templet: (item) => {
               // console.log(status.status);
               let statusMap = {
-                "0": '未发布',
-                "1": '已发布',
-                "2": '审核中'
+                "0": '<span class="layui-badge layui-bg-green">未发布</span>',
+                "1": '<span class="layui-badge layui-bg-cyan">已发布</span>',
 
               }
               return statusMap[item.status];
@@ -96,7 +99,22 @@
               return util.date_format(publish_date)
             }
           }
-          , { fixed: 'right', title: '操作', toolbar: '#barDemo' }
+          , { fixed: 'right', title: '操作',templet({status}){
+            let temStr = `<a class="layui-btn layui-btn-xs" lay-event="show">查看内容</a>`;
+              // 当状态是未发布 我们需要进行审核
+                switch(status){
+                  case 0:
+                  temStr += `<span class="layui-badge layui-bg-orange">待审核</span>`;
+                  break;
+                  default:
+                  break;
+                }
+                
+                temStr += `
+                <span class="layui-badge layui-bg-blue">编辑</span>
+                  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>`
+                  return temStr;
+          } }
         ]]
         , page: true
       });
@@ -112,8 +130,8 @@
             del(art_id);
             break;
           case 'edit':
-            console.log("edit");
-            break;
+              edit(art_id)
+              break;
         }
 
       });
@@ -140,9 +158,18 @@
               })
             });
         }
+    })  
 
+      // 跳转到文章编辑
+    function edit(art_id) {
+      // 需要吧 cat_id带过去 查询数据  作为内容
+      location.href = `/artedit?art_id=${art_id}`
+    }
+
+    // 跳转到文章添加页面
+    $("#add").on('click',() => {
+      location.href = `/addart`
     })
-
   </script>
 
 </body>
