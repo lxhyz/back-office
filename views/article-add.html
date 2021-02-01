@@ -13,6 +13,9 @@
       width: 20%;
       padding-left: 10px;
     }
+    .layui-form-selected dl{
+      z-index: 99999;
+    }
   </style>
 </head>
 
@@ -92,7 +95,8 @@
           <div class="layui-form-item layui-form-text">
             <label class="layui-form-label">内容</label>
             <div class="layui-input-block">
-              <textarea name="content" placeholder="请输入内容" class="layui-textarea"></textarea>
+              <!-- <textaret name="content" id="content" placeholder="请输入内容" class="layui-textarea"></textaret> -->
+              <div id="content"></div>
             </div>
           </div>
 
@@ -110,36 +114,38 @@
   </div>
   <script src="/public/js/juqery.js"></script>
   <script src="/public/layui/layui.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/wangeditor@latest/dist/wangEditor.min.js"></script>
   <script>
     //JavaScript代码区域
     layui.use(['form', 'upload'], function () {
       var form = layui.form;
       var upload = layui.upload;
 
-      
       // 实现图片上传
       var uploadInst = upload.render({
         elem: '#cover_img_upload' //绑定元素
         , url: '/upload/' //上传接口
         , done: function (res) {
           //上传完毕回调
-          let {code,message,src} = res;
-          if(code == 0) {
+          let { code, message, src } = res;
+          if (code == 0) {
             //1.图片预览 ， 2.吧图片路径提交到数据库后台
-            $("#cover_preview").attr('src',src).css('width','200','height','200');
+            $("#cover_preview").attr('src', src).css('width', '200', 'height', '200');
             $("input[name='cover").val(src)
           }
           console.log(res)
         }
         , error: function () {
           //请求异常回调
-          console.log(res) 
+          console.log(res)
         }
       });
 
       //监听提交
       form.on('submit(formDemo)', function (data) {
         let formData = data.field;
+        // 获取富文本编辑器中的内容
+        formData.content = editor.txt.html();
         // 发送ajax请求,入库数据
         $.post("/postArt", formData, ({ errcode, message }) => {
           if (errcode == 10004) {
@@ -163,6 +169,12 @@
         }, 'json')
       }
       loadCate();
+
+      // 富文本编辑器
+      const E = window.wangEditor
+      const editor = new E('#content')
+      editor.config.uploadImgShowBase64 = true;
+      editor.create()
 
       // 给表单赋值
       // form.val("formDemo", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值

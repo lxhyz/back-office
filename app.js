@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+// 引入session会话技术
+let session = require("express-session");
 
 // 导入路由模块
 const router = require("./router/router.js")
@@ -28,6 +30,19 @@ app.use('/public',express.static(path.join(__dirname,'public')));
 
 // 图片静态资源
 app.use('/uploads',express.static(path.join(__dirname,'uploads')));
+
+// 初始化session,定义session一些配置
+let options = {
+    name:"SESSIONID", // 待会写入到cookie中标识
+    secret: "FGVH$#E%&", // 用来加密会话，防止篡改。
+    cookie: {
+        httpOnly: true,
+        secure: false, // false-http(默认), true-https
+        maxAge:60000*24, // session在cookies存活24分钟，
+        // 再次访问，时间重置为24分钟， 24分钟内只要不访问则会失效
+    }
+};
+app.use( session(options) )
 
 // 使用路由中间件
 app.use(router);
