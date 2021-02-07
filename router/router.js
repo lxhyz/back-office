@@ -101,4 +101,16 @@ router.get("/logout",(req,res) => {
     res.redirect("/login")  // res.redirect 重定向
 });
 
+// 统计出分类的文章总数
+router.get("/cateCount",async (req,res) => {
+    let sql = `SELECT count(*) total, t2.name,t1.cat_id FROM article t1 
+    LEFT JOIN category t2 ON t1.cat_id = t2.cat_id GROUP BY t1.cat_id;`
+
+    // 连接数据库参数配置 导入model 执行sql语句
+    const model = require("../model/model.js");
+    let date = await model(sql); // [{}]
+    res.json(date);
+
+})
+
 module.exports = router;

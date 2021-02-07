@@ -61,8 +61,10 @@ artController.addart = (req, res) => {
 // 提交文章的数据入库
 artController.postArt = async (req, res) => {
     let { title, cat_id, status, content, cover } = req.body;
-    let sql = `insert into article(title,content,cat_id,status,cover,publish_date)
-                values('${title}','${content}',${cat_id},${status},'${cover}',now())
+    let username = req.session.userInfo.username;
+    console.log(username+'名字')
+    let sql = `insert into article(title,content,author,cat_id,status,cover,publish_date)
+                values('${title}','${content}','${username}',${cat_id},${status},'${cover}',now())
                 `;
     let result = await model(sql);
     if (result.affectedRows) {

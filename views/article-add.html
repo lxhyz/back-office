@@ -148,10 +148,11 @@
         formData.content = editor.txt.html();
         // 发送ajax请求,入库数据
         $.post("/postArt", formData, ({ errcode, message }) => {
-          if (errcode == 10004) {
+          console.log(errcode)
+          if (errcode == 10006) {
             location.href = '/del'
           }
-          layui.msg(message)
+         
         }, 'json')
         return false;
       });
